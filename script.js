@@ -62,12 +62,17 @@ class BuddhaScene {
         const canvas = document.getElementById('canvas');
         this.renderer = new THREE.WebGLRenderer({ 
             canvas: canvas, 
-            antialias: true,
-            alpha: true 
+            antialias: this.isMobile() ? false : true, // Disable antialiasing on mobile for performance
+            alpha: true,
+            powerPreference: "high-performance"
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.shadowMap.enabled = true;
+        
+        // Optimize pixel ratio for mobile devices
+        const pixelRatio = this.isMobile() ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2);
+        this.renderer.setPixelRatio(pixelRatio);
+        
+        this.renderer.shadowMap.enabled = !this.isMobile(); // Disable shadows on mobile for performance
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.2;
@@ -82,6 +87,22 @@ class BuddhaScene {
         this.controls.maxPolarAngle = Math.PI * 0.8;
         this.controls.autoRotate = false;
         this.controls.autoRotateSpeed = 0.5;
+        
+        // Mobile-specific touch controls
+        if (this.isMobile()) {
+            this.controls.enablePan = true;
+            this.controls.panSpeed = 0.8;
+            this.controls.rotateSpeed = 0.8;
+            this.controls.zoomSpeed = 1.2;
+            this.controls.touches = {
+                ONE: THREE.TOUCH.ROTATE,
+                TWO: THREE.TOUCH.DOLLY_PAN
+            };
+        }
+    }
+
+    isMobile() {
+        return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
     createLighting() {
@@ -107,25 +128,32 @@ class BuddhaScene {
         // Main golden light from above - more intense yellow
         const mainLight = new THREE.DirectionalLight(0xffcc00, 2.0);
         mainLight.position.set(0, 10, 5);
-        mainLight.castShadow = true;
-        mainLight.shadow.mapSize.width = 2048;
-        mainLight.shadow.mapSize.height = 2048;
-        mainLight.shadow.camera.near = 0.5;
-        mainLight.shadow.camera.far = 50;
+        
+        // Only enable shadows on desktop for performance
+        if (!this.isMobile()) {
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            mainLight.shadow.camera.near = 0.5;
+            mainLight.shadow.camera.far = 50;
+        }
+        
         this.scene.add(mainLight);
 
         // Ambient warm golden glow
         const ambientLight = new THREE.AmbientLight(0xffd700, 0.5);
         this.scene.add(ambientLight);
 
-        // Rim lighting - more golden
-        const rimLight1 = new THREE.DirectionalLight(0xffaa00, 1.0);
-        rimLight1.position.set(-5, 3, -3);
-        this.scene.add(rimLight1);
+        // Reduce rim lights on mobile for performance
+        if (!this.isMobile()) {
+            const rimLight1 = new THREE.DirectionalLight(0xffaa00, 1.0);
+            rimLight1.position.set(-5, 3, -3);
+            this.scene.add(rimLight1);
 
-        const rimLight2 = new THREE.DirectionalLight(0xffd700, 0.8);
-        rimLight2.position.set(5, 2, 3);
-        this.scene.add(rimLight2);
+            const rimLight2 = new THREE.DirectionalLight(0xffd700, 0.8);
+            rimLight2.position.set(5, 2, 3);
+            this.scene.add(rimLight2);
+        }
 
         // Point light for mystical golden glow
         const pointLight = new THREE.PointLight(0xffcc00, 1.5, 10);
@@ -184,8 +212,10 @@ class BuddhaScene {
     }
 
     createBackgroundElements() {
-        // Create floating lotus petals - more golden
-        for (let i = 0; i < 20; i++) {
+        // Create floating lotus petals - fewer on mobile for performance
+        const petalCount = this.isMobile() ? 10 : 20;
+        
+        for (let i = 0; i < petalCount; i++) {
             const petalGeometry = new THREE.SphereGeometry(0.1, 8, 6);
             const petalMaterial = new THREE.MeshPhongMaterial({ 
                 color: 0xffcc00, // Bright golden color
@@ -213,9 +243,9 @@ class BuddhaScene {
     }
 
     createParticles() {
-        // Create floating light particles
+        // Create floating light particles - fewer on mobile
         const particleGeometry = new THREE.BufferGeometry();
-        const particleCount = 100;
+        const particleCount = this.isMobile() ? 50 : 100;
         const positions = new Float32Array(particleCount * 3);
 
         for (let i = 0; i < particleCount * 3; i += 3) {
@@ -228,7 +258,7 @@ class BuddhaScene {
 
         const particleMaterial = new THREE.PointsMaterial({
             color: 0xffcc00, // Bright golden particles
-            size: 0.08,
+            size: this.isMobile() ? 0.06 : 0.08, // Smaller on mobile
             transparent: true,
             opacity: 0.8,
             blending: THREE.AdditiveBlending
@@ -240,17 +270,22 @@ class BuddhaScene {
     }
 
     createThaiScriptures() {
-        // Create Matrix-style columns (15 columns across the scene)
-        const columnCount = 25;
+        // Optimize for mobile performance - fewer columns and shorter streams
+        const columnCount = this.isMobile() ? 15 : 25;
         const columnWidth = 40 / columnCount; // Spread across 40 units width
 
         for (let col = 0; col < columnCount; col++) {
             // Each column has multiple falling character streams
-            const streamsPerColumn = Math.floor(Math.random() * 3) + 2; // 2-4 streams per column
+            const streamsPerColumn = this.isMobile() ? 
+                Math.floor(Math.random() * 2) + 1 : // 1-2 streams per column on mobile
+                Math.floor(Math.random() * 3) + 2; // 2-4 streams per column on desktop
             
             for (let stream = 0; stream < streamsPerColumn; stream++) {
-                // Create a stream of characters (8-15 characters per stream)
-                const streamLength = Math.floor(Math.random() * 8) + 8;
+                // Create a stream of characters (shorter on mobile)
+                const streamLength = this.isMobile() ? 
+                    Math.floor(Math.random() * 5) + 5 : // 5-9 characters on mobile
+                    Math.floor(Math.random() * 8) + 8; // 8-15 characters on desktop
+                
                 const streamChars = [];
                 
                 for (let i = 0; i < streamLength; i++) {
@@ -260,25 +295,32 @@ class BuddhaScene {
                 // Create canvas for the entire character stream
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
-                canvas.width = 64;
-                canvas.height = streamLength * 80; // 80px per character
+                
+                // Optimize canvas size for mobile
+                const canvasWidth = this.isMobile() ? 48 : 64;
+                const charHeight = this.isMobile() ? 60 : 80;
+                
+                canvas.width = canvasWidth;
+                canvas.height = streamLength * charHeight;
 
                 // Set text style
-                context.font = 'bold 32px "Noto Sans Thai", Arial, sans-serif';
+                const fontSize = this.isMobile() ? 24 : 32;
+                context.font = `bold ${fontSize}px "Noto Sans Thai", Arial, sans-serif`;
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
 
                 // Draw each character with Matrix-like gradient effect
                 for (let i = 0; i < streamChars.length; i++) {
-                    const charY = (i + 0.5) * 80;
+                    const charY = (i + 0.5) * charHeight;
                     
                     // Create fade effect - brightest at the bottom (head of stream)
                     const intensity = (streamChars.length - i) / streamChars.length;
                     const alpha = Math.pow(intensity, 1.5) * 0.9;
                     
-                    // Golden Matrix effect with glow
+                    // Golden Matrix effect with glow (reduced on mobile)
+                    const shadowBlur = this.isMobile() ? 4 : 8;
                     context.shadowColor = `rgba(255, 204, 0, ${alpha * 0.8})`;
-                    context.shadowBlur = 8;
+                    context.shadowBlur = shadowBlur;
                     context.fillStyle = `rgba(255, 204, 0, ${alpha})`;
                     
                     context.fillText(streamChars[i], canvas.width / 2, charY);
@@ -322,7 +364,9 @@ class BuddhaScene {
                     resetHeight: Math.random() * 10 + 20,
                     canvas: canvas,
                     context: context,
-                    texture: texture
+                    texture: texture,
+                    charHeight: charHeight,
+                    fontSize: fontSize
                 };
 
                 this.scene.add(streamMesh);
@@ -464,12 +508,15 @@ class BuddhaScene {
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 
                 // Redraw with updated characters and Matrix fade effect
-                context.font = 'bold 32px "Noto Sans Thai", Arial, sans-serif';
+                const fontSize = script.userData.fontSize || 32;
+                const charHeight = script.userData.charHeight || 80;
+                
+                context.font = `bold ${fontSize}px "Noto Sans Thai", Arial, sans-serif`;
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
                 
                 for (let i = 0; i < script.userData.originalChars.length; i++) {
-                    const charY = (i + 0.5) * 80;
+                    const charY = (i + 0.5) * charHeight;
                     
                     // Matrix fade effect - brightest at bottom (head of stream)
                     const intensity = (streamLength - i) / streamLength;
@@ -479,8 +526,10 @@ class BuddhaScene {
                     const flicker = 0.8 + Math.random() * 0.2;
                     const finalAlpha = alpha * flicker;
                     
+                    // Use mobile-optimized shadow blur
+                    const shadowBlur = this.isMobile() ? 4 : 8;
                     context.shadowColor = `rgba(255, 204, 0, ${finalAlpha * 0.8})`;
-                    context.shadowBlur = 8;
+                    context.shadowBlur = shadowBlur;
                     context.fillStyle = `rgba(255, 204, 0, ${finalAlpha})`;
                     
                     context.fillText(script.userData.originalChars[i], canvas.width / 2, charY);
