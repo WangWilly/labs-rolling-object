@@ -2,6 +2,8 @@
 
 A beautiful, interactive 3D web viewer for your Buddha pendant with sacred lighting and spiritual atmosphere.
 
+🌟 **[Live Demo on GitHub Pages](https://willywangkaa.github.io/labs-rolling-obj/)** (Available after deployment)
+
 ## Features
 
 - **Sacred Spinning Animation**: Smooth rotation showcasing the pendant from all angles
@@ -18,6 +20,11 @@ A beautiful, interactive 3D web viewer for your Buddha pendant with sacred light
 
 ## Quick Start
 
+### 🚀 **GitHub Pages (Recommended)**
+Visit the live demo: **[Sacred Buddha Pendant Viewer](https://willywangkaa.github.io/labs-rolling-obj/)**
+
+### 🏠 **Local Development**
+
 1. **Start the local server**:
    ```bash
    npm start
@@ -33,6 +40,22 @@ A beautiful, interactive 3D web viewer for your Buddha pendant with sacred light
    ```
 
 3. **Enjoy the sacred experience** of your Buddha pendant!
+
+## 🌐 GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages:
+
+1. **Push to GitHub**: Any push to the `main` branch triggers automatic deployment
+2. **GitHub Actions**: Uses workflow automation for seamless deployment
+3. **Live URL**: Accessible at `https://yourusername.github.io/repository-name/`
+4. **No Build Process**: Direct static file serving - perfect for Three.js projects
+
+### Manual Deployment Steps:
+1. Create a repository on GitHub
+2. Push this project to the repository
+3. Go to Repository Settings → Pages
+4. Select "Deploy from a branch" → "main" → "/ (root)"
+5. Your site will be live in a few minutes!
 
 ## Controls
 
