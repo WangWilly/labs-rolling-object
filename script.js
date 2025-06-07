@@ -10,6 +10,14 @@ class BuddhaScene {
         this.lightMode = 0; // 0: sacred, 1: warm, 2: mystical
         this.rotationSpeed = 0.005;
         this.particles = [];
+        this.thaiScriptures = [];
+        
+        // Thai characters for Matrix effect
+        this.thaiChars = [
+            'ก', 'ข', 'ค', 'ง', 'จ', 'ฉ', 'ช', 'ซ', 'ญ', 'ด', 'ต', 'ถ', 'ท', 'ธ', 'น', 'บ', 'ป', 'ผ', 'ฝ', 'พ', 'ฟ', 'ภ', 'ม', 'ย', 'ร', 'ล', 'ว', 'ศ', 'ษ', 'ส', 'ห', 'ฬ', 'อ', 'ฮ',
+            'ะ', 'ั', 'า', 'ำ', 'ิ', 'ี', 'ึ', 'ื', 'ุ', 'ู', 'เ', 'แ', 'โ', 'ใ', 'ไ', 'ๅ', 'ๆ', '็', '่', '้', '๊', '๋', '์',
+            '๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'
+        ];
         
         this.init();
     }
@@ -22,6 +30,7 @@ class BuddhaScene {
         this.createLighting();
         this.createEnvironment();
         this.createParticles();
+        this.createThaiScriptures();
         this.loadModel();
         this.setupEventListeners();
         this.animate();
@@ -34,8 +43,8 @@ class BuddhaScene {
 
     createScene() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x0d0704);
-        this.scene.fog = new THREE.Fog(0x0d0704, 5, 15);
+        this.scene.background = new THREE.Color(0x1a1200); // More yellow-tinted dark background
+        this.scene.fog = new THREE.Fog(0x1a1200, 5, 15);
     }
 
     createCamera() {
@@ -95,8 +104,8 @@ class BuddhaScene {
     }
 
     createSacredLighting() {
-        // Main golden light from above
-        const mainLight = new THREE.DirectionalLight(0xd4af37, 1.5);
+        // Main golden light from above - more intense yellow
+        const mainLight = new THREE.DirectionalLight(0xffcc00, 2.0);
         mainLight.position.set(0, 10, 5);
         mainLight.castShadow = true;
         mainLight.shadow.mapSize.width = 2048;
@@ -105,21 +114,21 @@ class BuddhaScene {
         mainLight.shadow.camera.far = 50;
         this.scene.add(mainLight);
 
-        // Ambient warm glow
-        const ambientLight = new THREE.AmbientLight(0xfff4e6, 0.3);
+        // Ambient warm golden glow
+        const ambientLight = new THREE.AmbientLight(0xffd700, 0.5);
         this.scene.add(ambientLight);
 
-        // Rim lighting
-        const rimLight1 = new THREE.DirectionalLight(0xffebcd, 0.8);
+        // Rim lighting - more golden
+        const rimLight1 = new THREE.DirectionalLight(0xffaa00, 1.0);
         rimLight1.position.set(-5, 3, -3);
         this.scene.add(rimLight1);
 
-        const rimLight2 = new THREE.DirectionalLight(0xffd700, 0.6);
+        const rimLight2 = new THREE.DirectionalLight(0xffd700, 0.8);
         rimLight2.position.set(5, 2, 3);
         this.scene.add(rimLight2);
 
-        // Point light for mystical glow
-        const pointLight = new THREE.PointLight(0xd4af37, 1, 10);
+        // Point light for mystical golden glow
+        const pointLight = new THREE.PointLight(0xffcc00, 1.5, 10);
         pointLight.position.set(0, 3, 0);
         this.scene.add(pointLight);
     }
@@ -157,12 +166,12 @@ class BuddhaScene {
     }
 
     createEnvironment() {
-        // Create a subtle ground plane
+        // Create a subtle ground plane - more golden
         const groundGeometry = new THREE.PlaneGeometry(20, 20);
         const groundMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x2c1810,
+            color: 0x3d2b00, // Golden brown ground
             transparent: true,
-            opacity: 0.5
+            opacity: 0.6
         });
         const ground = new THREE.Mesh(groundGeometry, groundMaterial);
         ground.rotation.x = -Math.PI / 2;
@@ -175,15 +184,15 @@ class BuddhaScene {
     }
 
     createBackgroundElements() {
-        // Create floating lotus petals
+        // Create floating lotus petals - more golden
         for (let i = 0; i < 20; i++) {
             const petalGeometry = new THREE.SphereGeometry(0.1, 8, 6);
             const petalMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0xd4af37,
+                color: 0xffcc00, // Bright golden color
                 transparent: true,
-                opacity: 0.3,
-                emissive: 0xd4af37,
-                emissiveIntensity: 0.1
+                opacity: 0.4,
+                emissive: 0xffaa00,
+                emissiveIntensity: 0.2
             });
             const petal = new THREE.Mesh(petalGeometry, petalMaterial);
             
@@ -218,16 +227,108 @@ class BuddhaScene {
         particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
         const particleMaterial = new THREE.PointsMaterial({
-            color: 0xd4af37,
-            size: 0.05,
+            color: 0xffcc00, // Bright golden particles
+            size: 0.08,
             transparent: true,
-            opacity: 0.6,
+            opacity: 0.8,
             blending: THREE.AdditiveBlending
         });
 
         const particles = new THREE.Points(particleGeometry, particleMaterial);
         this.scene.add(particles);
         this.backgroundParticles = particles;
+    }
+
+    createThaiScriptures() {
+        // Create Matrix-style columns (15 columns across the scene)
+        const columnCount = 25;
+        const columnWidth = 40 / columnCount; // Spread across 40 units width
+
+        for (let col = 0; col < columnCount; col++) {
+            // Each column has multiple falling character streams
+            const streamsPerColumn = Math.floor(Math.random() * 3) + 2; // 2-4 streams per column
+            
+            for (let stream = 0; stream < streamsPerColumn; stream++) {
+                // Create a stream of characters (8-15 characters per stream)
+                const streamLength = Math.floor(Math.random() * 8) + 8;
+                const streamChars = [];
+                
+                for (let i = 0; i < streamLength; i++) {
+                    streamChars.push(this.thaiChars[Math.floor(Math.random() * this.thaiChars.length)]);
+                }
+
+                // Create canvas for the entire character stream
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 64;
+                canvas.height = streamLength * 80; // 80px per character
+
+                // Set text style
+                context.font = 'bold 32px "Noto Sans Thai", Arial, sans-serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+
+                // Draw each character with Matrix-like gradient effect
+                for (let i = 0; i < streamChars.length; i++) {
+                    const charY = (i + 0.5) * 80;
+                    
+                    // Create fade effect - brightest at the bottom (head of stream)
+                    const intensity = (streamChars.length - i) / streamChars.length;
+                    const alpha = Math.pow(intensity, 1.5) * 0.9;
+                    
+                    // Golden Matrix effect with glow
+                    context.shadowColor = `rgba(255, 204, 0, ${alpha * 0.8})`;
+                    context.shadowBlur = 8;
+                    context.fillStyle = `rgba(255, 204, 0, ${alpha})`;
+                    
+                    context.fillText(streamChars[i], canvas.width / 2, charY);
+                }
+
+                // Create texture from canvas
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.needsUpdate = true;
+
+                // Create material with additive blending for glow effect
+                const material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true,
+                    opacity: 1.0,
+                    side: THREE.DoubleSide,
+                    blending: THREE.AdditiveBlending
+                });
+
+                // Create geometry - tall and narrow like Matrix columns
+                const geometry = new THREE.PlaneGeometry(1, streamLength * 1.2);
+                const streamMesh = new THREE.Mesh(geometry, material);
+
+                // Position in columns across the scene
+                const xPos = (col - columnCount / 2) * columnWidth + (Math.random() - 0.5) * 2;
+                const startY = Math.random() * 10 + 20; // Start high above
+                const zPos = (Math.random() - 0.5) * 30; // Spread in depth
+
+                streamMesh.position.set(xPos, startY, zPos);
+
+                // Always face the camera for billboard effect
+                streamMesh.lookAt(this.camera.position);
+
+                // Store Matrix-style falling data
+                streamMesh.userData = {
+                    fallSpeed: Math.random() * 0.05 + 0.03, // Faster falling like Matrix
+                    originalChars: streamChars,
+                    changeSpeed: Math.random() * 0.1 + 0.05, // Character change frequency
+                    lastChangeTime: 0,
+                    streamLength: streamLength,
+                    column: col,
+                    resetHeight: Math.random() * 10 + 20,
+                    canvas: canvas,
+                    context: context,
+                    texture: texture
+                };
+
+                this.scene.add(streamMesh);
+                this.thaiScriptures.push(streamMesh);
+            }
+        }
     }
 
     loadModel() {
@@ -334,6 +435,79 @@ class BuddhaScene {
         if (this.backgroundParticles) {
             this.backgroundParticles.rotation.y += 0.001;
         }
+
+        // Animate falling Thai scriptures (Matrix style)
+        this.thaiScriptures.forEach((script) => {
+            const currentTime = Date.now() * 0.001; // Convert to seconds
+            
+            // Fall down at Matrix speed
+            script.position.y -= script.userData.fallSpeed;
+            
+            // Matrix-style character changing effect
+            if (currentTime - script.userData.lastChangeTime > script.userData.changeSpeed) {
+                script.userData.lastChangeTime = currentTime;
+                
+                // Randomly change some characters in the stream
+                const changeCount = Math.floor(Math.random() * 3) + 1;
+                for (let i = 0; i < changeCount; i++) {
+                    const charIndex = Math.floor(Math.random() * script.userData.originalChars.length);
+                    script.userData.originalChars[charIndex] = 
+                        this.thaiChars[Math.floor(Math.random() * this.thaiChars.length)];
+                }
+                
+                // Redraw the canvas with new characters
+                const canvas = script.userData.canvas;
+                const context = script.userData.context;
+                const streamLength = script.userData.streamLength;
+                
+                // Clear canvas
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Redraw with updated characters and Matrix fade effect
+                context.font = 'bold 32px "Noto Sans Thai", Arial, sans-serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                for (let i = 0; i < script.userData.originalChars.length; i++) {
+                    const charY = (i + 0.5) * 80;
+                    
+                    // Matrix fade effect - brightest at bottom (head of stream)
+                    const intensity = (streamLength - i) / streamLength;
+                    const alpha = Math.pow(intensity, 1.5) * 0.9;
+                    
+                    // Add random brightness flicker for Matrix effect
+                    const flicker = 0.8 + Math.random() * 0.2;
+                    const finalAlpha = alpha * flicker;
+                    
+                    context.shadowColor = `rgba(255, 204, 0, ${finalAlpha * 0.8})`;
+                    context.shadowBlur = 8;
+                    context.fillStyle = `rgba(255, 204, 0, ${finalAlpha})`;
+                    
+                    context.fillText(script.userData.originalChars[i], canvas.width / 2, charY);
+                }
+                
+                // Update texture
+                script.userData.texture.needsUpdate = true;
+            }
+            
+            // Always face camera for billboard effect
+            script.lookAt(this.camera.position);
+            
+            // Reset to top when it goes below ground (Matrix infinite loop)
+            if (script.position.y < -script.userData.streamLength - 5) {
+                script.position.y = script.userData.resetHeight;
+                script.position.x = (script.userData.column - 12.5) * 1.6 + (Math.random() - 0.5) * 2;
+                script.position.z = (Math.random() - 0.5) * 30;
+                
+                // Reset some characters for variety
+                for (let i = 0; i < script.userData.originalChars.length; i++) {
+                    if (Math.random() < 0.3) { // 30% chance to change each character
+                        script.userData.originalChars[i] = 
+                            this.thaiChars[Math.floor(Math.random() * this.thaiChars.length)];
+                    }
+                }
+            }
+        });
 
         // Update controls
         this.controls.update();

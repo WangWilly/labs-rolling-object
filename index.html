@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sacred Buddha Pendant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,10 +15,10 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #2c1810 0%, #1a0f08 50%, #0d0704 100%);
+            font-family: 'Noto Sans Thai', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #3d2b00 0%, #1a1200 50%, #0d0704 100%);
             overflow: hidden;
-            color: #d4af37;
+            color: #ffcc00;
         }
 
         #container {
@@ -44,8 +47,8 @@
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
-            color: #d4af37;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
         }
 
         .title h1 {
@@ -73,14 +76,14 @@
             padding: 15px 25px;
             border-radius: 25px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(255, 204, 0, 0.3);
             pointer-events: auto;
         }
 
         .control-button {
-            background: linear-gradient(45deg, #d4af37, #b8941f);
+            background: linear-gradient(45deg, #ffcc00, #ffa500);
             border: none;
-            color: #1a0f08;
+            color: #1a1200;
             padding: 10px 20px;
             border-radius: 20px;
             cursor: pointer;
@@ -91,7 +94,7 @@
 
         .control-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.6);
         }
 
         .loading {
@@ -106,8 +109,8 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 3px solid rgba(212, 175, 55, 0.3);
-            border-top: 3px solid #d4af37;
+            border: 3px solid rgba(255, 204, 0, 0.3);
+            border-top: 3px solid #ffcc00;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
@@ -127,6 +130,7 @@
             <div class="title">
                 <h1>॥ Sacred Buddha Pendant ॥</h1>
                 <p>May wisdom and compassion guide your path</p>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;">สัพเพ สัตตา สุขิตา โหนตุ</p>
             </div>
             
             <div class="controls">
