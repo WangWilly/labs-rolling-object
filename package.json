@@ -1,0 +1,22 @@
+{
+  "name": "sacred-buddha-pendant-viewer",
+  "version": "1.0.0",
+  "description": "A sacred 3D viewer for Buddha pendant with spinning animation",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "three.js",
+    "3d",
+    "buddha",
+    "pendant",
+    "sacred",
+    "web"
+  ],
+  "author": "WangWilly",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
