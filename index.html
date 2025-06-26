@@ -287,9 +287,19 @@
 
         /* Mobile optimizations */
         @media screen and (max-width: 768px) {
+            /* Frame adjustments */
+            #frame-wrapper { padding: 15px !important; }
+            #frame-wrapper .frame-piece { box-shadow: inset 0 0 5px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.5) !important; }
+            #frame-wrapper .frame-top, #frame-wrapper .frame-bottom { height: 15px !important; }
+            #frame-wrapper .frame-left, #frame-wrapper .frame-right { width: 15px !important; }
+            #frame-wrapper .frame-corner { width: 15px !important; height: 15px !important; }
+            #frame-wrapper .frame-top::after, #frame-wrapper .frame-bottom::after { left: 15px !important; right: 15px !important; }
+            #frame-wrapper .frame-left::after, #frame-wrapper .frame-right::after { top: 15px !important; bottom: 15px !important; }
+
+            /* Title adjustments */
             .title {
-                top: 20px;
-                padding: 0 20px;
+                top: 30px;
+                padding: 0 30px;
             }
 
             .title::before {
@@ -323,7 +333,7 @@
             }
 
             .controls {
-                bottom: 20px;
+                bottom: 30px;
                 flex-direction: column;
                 gap: 12px;
                 padding: 12px 20px;
@@ -340,9 +350,18 @@
         }
 
         @media screen and (max-width: 480px) {
+            /* Frame adjustments */
+            #frame-wrapper { padding: 10px !important; }
+            #frame-wrapper .frame-top, #frame-wrapper .frame-bottom { height: 10px !important; }
+            #frame-wrapper .frame-left, #frame-wrapper .frame-right { width: 10px !important; }
+            #frame-wrapper .frame-corner { width: 10px !important; height: 10px !important; }
+            #frame-wrapper .frame-top::after, #frame-wrapper .frame-bottom::after { left: 10px !important; right: 10px !important; }
+            #frame-wrapper .frame-left::after, #frame-wrapper .frame-right::after { top: 10px !important; bottom: 10px !important; }
+
+            /* Title adjustments */
             .title {
-                top: 15px;
-                padding: 0 15px;
+                top: 20px;
+                padding: 0 20px;
             }
 
             .title::before {
@@ -376,7 +395,7 @@
             }
 
             .controls {
-                bottom: 15px;
+                bottom: 20px;
                 padding: 10px 15px;
                 width: 95%;
             }
@@ -409,6 +428,94 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* --- Chinese Wood Frame Styles --- */
+        #frame-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            padding: 25px; /* Adjust frame thickness */
+            pointer-events: none; /* Allows clicks to go through to the content */
+            z-index: 100;
+        }
+
+        .frame-piece {
+            position: absolute;
+            background-color: #3e2712;
+            background-image: linear-gradient(to top, rgba(0,0,0,0.5), transparent 30%, transparent 70%, rgba(0,0,0,0.5)),
+                              linear-gradient(to left, #5a3a22, #442d1a, #332113);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.7), 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .frame-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 25px;
+        }
+
+        .frame-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25px;
+        }
+
+        .frame-left {
+            top: 0;
+            left: 0;
+            width: 25px;
+            height: 100%;
+        }
+
+        .frame-right {
+            top: 0;
+            right: 0;
+            width: 25px;
+            height: 100%;
+        }
+
+        .frame-corner {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #3e2712;
+             background-image: linear-gradient(45deg, #5a3a22, #332113);
+        }
+
+        .corner-tl { top: 0; left: 0; }
+        .corner-tr { top: 0; right: 0; }
+        .corner-bl { bottom: 0; left: 0; }
+        .corner-br { bottom: 0; right: 0; }
+
+        /* Gold inlay decoration */
+        .frame-piece::after, .frame-corner::after {
+            content: '';
+            position: absolute;
+            opacity: 0.6;
+        }
+        
+        /* horizontal inlay */
+        .frame-top::after, .frame-bottom::after {
+            left: 25px;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ffcc00, transparent);
+        }
+
+        /* vertical inlay */
+        .frame-left::after, .frame-right::after {
+            top: 25px;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #ffcc00, transparent);
+        }
     </style>
 </head>
 <body>
@@ -433,6 +540,18 @@
             <div class="spinner"></div>
             <p>Loading Sacred Model...</p>
         </div>
+    </div>
+
+    <!-- The Chinese Wood Frame -->
+    <div id="frame-wrapper">
+        <div class="frame-piece frame-top"></div>
+        <div class="frame-piece frame-bottom"></div>
+        <div class="frame-piece frame-left"></div>
+        <div class="frame-piece frame-right"></div>
+        <div class="frame-corner corner-tl"></div>
+        <div class="frame-corner corner-tr"></div>
+        <div class="frame-corner corner-bl"></div>
+        <div class="frame-corner corner-br"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
