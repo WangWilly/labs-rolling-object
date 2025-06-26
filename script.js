@@ -7,10 +7,12 @@ class BuddhaScene {
         this.controls = null;
         this.buddhaModel = null;
         this.isRotating = true;
+        /** @deprecated */
         this.lightMode = 0; // 0: sacred, 1: warm, 2: mystical
         this.rotationSpeed = 0.005;
         this.particles = [];
         this.thaiScriptures = [];
+        this.lavaBackground = null; // Add lava background property
         
         // Thai characters for Matrix effect
         this.thaiChars = [
@@ -26,13 +28,14 @@ class BuddhaScene {
         this.createScene();
         this.createCamera();
         this.createRenderer();
+        this.createLavaBackground(); // Initialize lava background
         this.createControls();
         this.createLighting();
         this.createEnvironment();
-        this.createParticles();
+        // this.createParticles();
         this.createThaiScriptures();
         this.loadModel();
-        this.setupEventListeners();
+        // this.setupEventListeners();
         this.animate();
         
         // Hide loading after a short delay
@@ -43,7 +46,7 @@ class BuddhaScene {
 
     createScene() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x1a1200); // More yellow-tinted dark background
+        // Keep the fog for atmospheric effect
         this.scene.fog = new THREE.Fog(0x1a1200, 5, 15);
     }
 
@@ -76,6 +79,27 @@ class BuddhaScene {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.2;
+        
+        // Important: Set autoClear to false for layered rendering
+        this.renderer.autoClear = false;
+    }
+
+    createLavaBackground() {
+        // Initialize lava background with Buddha-themed colors (more vibrant)
+        this.lavaBackground = new LavaLampBackground({
+            colorA: new THREE.Color(0x000000), // Pure black background
+            colorB: new THREE.Color(0xffcc00), // Golden yellow (Buddha gold)
+            colorC: new THREE.Color(0xff8800), // Bright orange
+            colorD: new THREE.Color(0xffffff), // White highlights
+            speed: 1.0, // Normal speed for visibility
+            noiseScale: 2.0,
+            noiseIntensity: 0.3,
+            blobScale: 2.0, // Larger blobs for visibility
+            glitchIntensity: 0.1 // More visible glitch effect
+        });
+        
+        this.lavaBackground.init(this.renderer);
+        console.log('Lava background initialized:', this.lavaBackground);
     }
 
     createControls() {
@@ -106,22 +130,23 @@ class BuddhaScene {
     }
 
     createLighting() {
-        // Remove existing lights
-        this.scene.children = this.scene.children.filter(child => 
-            !(child instanceof THREE.Light)
-        );
+        // // Remove existing lights
+        // this.scene.children = this.scene.children.filter(child => 
+        //     !(child instanceof THREE.Light)
+        // );
+        this.createMysticalLighting();
 
-        switch(this.lightMode) {
-            case 0: // Sacred golden lighting
-                this.createSacredLighting();
-                break;
-            case 1: // Warm temple lighting
-                this.createWarmLighting();
-                break;
-            case 2: // Mystical blue lighting
-                this.createMysticalLighting();
-                break;
-        }
+        // switch(this.lightMode) {
+        //     case 0: // Sacred golden lighting
+        //         this.createSacredLighting();
+        //         break;
+        //     case 1: // Warm temple lighting
+        //         this.createWarmLighting();
+        //         break;
+        //     case 2: // Mystical blue lighting
+        //         this.createMysticalLighting();
+        //         break;
+        // }
     }
 
     createSacredLighting() {
@@ -195,20 +220,20 @@ class BuddhaScene {
 
     createEnvironment() {
         // Create a subtle ground plane - more golden
-        const groundGeometry = new THREE.PlaneGeometry(20, 20);
-        const groundMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x3d2b00, // Golden brown ground
-            transparent: true,
-            opacity: 0.6
-        });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -2;
-        ground.receiveShadow = true;
-        this.scene.add(ground);
+        // const groundGeometry = new THREE.PlaneGeometry(20, 20);
+        // const groundMaterial = new THREE.MeshLambertMaterial({ 
+        //     color: 0x3d2b00, // Golden brown ground
+        //     transparent: true,
+        //     opacity: 0.6
+        // });
+        // const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        // ground.rotation.x = -Math.PI / 2;
+        // ground.position.y = -2;
+        // ground.receiveShadow = true;
+        // this.scene.add(ground);
 
         // Add ethereal background elements
-        this.createBackgroundElements();
+        // this.createBackgroundElements();
     }
 
     createBackgroundElements() {
@@ -442,7 +467,8 @@ class BuddhaScene {
             this.camera.lookAt(0, 0, 0);
             this.controls.reset();
         });
-
+        
+        /**
         // Lighting toggle
         document.getElementById('lighting').addEventListener('click', () => {
             this.lightMode = (this.lightMode + 1) % 3;
@@ -452,6 +478,7 @@ class BuddhaScene {
             const button = document.getElementById('lighting');
             button.textContent = `💡 ${modes[this.lightMode]}`;
         });
+         */
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -561,8 +588,23 @@ class BuddhaScene {
         // Update controls
         this.controls.update();
 
-        // Render the scene
-        this.renderer.render(this.scene, this.camera);
+        // Clear canvas once
+        this.renderer.clear();
+
+        // Update and render lava background first (fullscreen behind everything)
+        if (this.lavaBackground) {
+            this.lavaBackground.update();
+            
+            // Clear depth buffer so main scene renders on top
+            this.renderer.clearDepth();
+            
+            // Render main scene
+            this.renderer.render(this.scene, this.camera);
+        } else {
+            console.log('Lava background not available');
+            // Fallback rendering
+            this.renderer.render(this.scene, this.camera);
+        }
     }
 }
 
