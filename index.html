@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Sacred Buddha Pendant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,17 +14,30 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --vh: 1vh;
+        }
+
         body {
             font-family: 'Noto Sans Thai', 'Arial', sans-serif;
             background: linear-gradient(135deg, #3d2b00 0%, #1a1200 50%, #0d0704 100%);
             overflow: hidden;
             color: #6102a1;
+            /* Handle mobile browser toolbar */
+            min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100); /* Fallback for dynamic height */
+            min-height: 100dvh; /* Dynamic viewport height */
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100); /* Fallback for dynamic height */
+            height: 100dvh;
         }
 
         #container {
             position: relative;
             width: 100vw;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100); /* Fallback for dynamic height */
+            height: 100dvh; /* Dynamic viewport height for mobile */
         }
 
         #canvas {
@@ -63,6 +76,8 @@
                 2px 2px 4px rgba(0, 0, 0, 0.8);
             position: relative;
             z-index: 15;
+            /* Handle safe area for mobile */
+            top: max(40px, env(safe-area-inset-top) + 20px);
         }
 
         .title::before {
@@ -298,7 +313,7 @@
 
             /* Title adjustments */
             .title {
-                top: 30px;
+                top: max(30px, env(safe-area-inset-top) + 15px);
                 padding: 0 30px;
             }
 
@@ -360,7 +375,7 @@
 
             /* Title adjustments */
             .title {
-                top: 20px;
+                top: max(20px, env(safe-area-inset-top) + 10px);
                 padding: 0 20px;
             }
 
@@ -437,9 +452,15 @@
             left: 0;
             width: 100vw;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
             padding: 25px; /* Adjust frame thickness */
             pointer-events: none; /* Allows clicks to go through to the content */
             z-index: 100;
+            /* Handle safe areas on mobile */
+            padding-top: max(25px, env(safe-area-inset-top));
+            padding-bottom: max(25px, env(safe-area-inset-bottom));
+            padding-left: max(25px, env(safe-area-inset-left));
+            padding-right: max(25px, env(safe-area-inset-right));
         }
 
         .frame-piece {
@@ -520,7 +541,7 @@
 
         /* Info Card Styles - Mobile First Responsive */
         .info-card {
-            position: absolute;
+            position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
@@ -536,9 +557,10 @@
             pointer-events: auto;
             animation: subtleGlow 6s ease-in-out infinite alternate;
             
-            /* Mobile default styles */
+            /* Mobile default styles with safe area */
             width: 90vw;
             max-width: 280px;
+            bottom: max(60px, env(safe-area-inset-bottom) + 40px);
         }
 
         .card-header {
@@ -630,7 +652,7 @@
             .info-card {
                 width: 92vw !important;
                 max-width: 270px !important;
-                bottom: 18px !important;
+                bottom: max(50px, env(safe-area-inset-bottom) + 30px) !important;
             }
 
             .card-header {
@@ -728,7 +750,7 @@
             .info-card {
                 width: 95vw !important;
                 max-width: 250px !important;
-                bottom: 15px !important;
+                bottom: max(45px, env(safe-area-inset-bottom) + 25px) !important;
             }
 
             .card-header {
@@ -779,6 +801,9 @@
             right: 20px;
             z-index: 300;
             pointer-events: auto;
+            /* Handle safe areas */
+            top: max(20px, env(safe-area-inset-top) + 10px);
+            right: max(20px, env(safe-area-inset-right) + 10px);
         }
 
         .audio-button {
@@ -834,8 +859,8 @@
         /* Mobile adjustments for audio control */
         @media screen and (max-width: 768px) {
             .audio-control {
-                top: 15px !important;
-                right: 15px !important;
+                top: max(15px, env(safe-area-inset-top) + 8px) !important;
+                right: max(15px, env(safe-area-inset-right) + 8px) !important;
             }
 
             .audio-button {
@@ -848,8 +873,8 @@
 
         @media screen and (max-width: 480px) {
             .audio-control {
-                top: 10px !important;
-                right: 10px !important;
+                top: max(10px, env(safe-area-inset-top) + 5px) !important;
+                right: max(10px, env(safe-area-inset-right) + 5px) !important;
             }
 
             .audio-button {
@@ -862,8 +887,8 @@
 
         @media screen and (max-width: 380px) {
             .audio-control {
-                top: 8px !important;
-                right: 8px !important;
+                top: max(8px, env(safe-area-inset-top) + 3px) !important;
+                right: max(8px, env(safe-area-inset-right) + 3px) !important;
             }
 
             .audio-button {
@@ -1033,6 +1058,22 @@
             audioToggle.textContent = '🔇';
             audioToggle.classList.add('muted');
             audioToggle.title = 'Click to Play Chanting';
+        });
+
+        // Handle dynamic viewport height changes on mobile
+        function updateViewportHeight() {
+            // Update CSS custom property for viewport height
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        }
+
+        // Initial call
+        updateViewportHeight();
+
+        // Update on resize (handles mobile browser toolbar show/hide)
+        window.addEventListener('resize', updateViewportHeight);
+        window.addEventListener('orientationchange', function() {
+            // Small delay to ensure the orientation change is complete
+            setTimeout(updateViewportHeight, 100);
         });
     </script>
 </body>
