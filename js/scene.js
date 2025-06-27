@@ -404,7 +404,7 @@ class BuddhaScene {
         const loader = new THREE.GLTFLoader();
         
         loader.load(
-            './pra1_Model_4_0000000.glb',
+            './assets/models/pra1_Model_4_0000000.glb',
             (gltf) => {
                 this.buddhaModel = gltf.scene;
                 
