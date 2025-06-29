@@ -1,8 +1,8 @@
 {
   "name": "sacred-buddha-pendant-viewer",
-  "version": "2.0.0",
-  "description": "A sacred 3D viewer for Buddha pendant with divine effects, responsive design, and background chanting",
-  "main": "index-refactored.html",
+  "version": "2.1.0",
+  "description": "A sacred 3D viewer for Buddha pendant with divine effects, responsive design, background chanting, and cinematic landing page",
+  "main": "index.html",
   "scripts": {
     "start": "python3 -m http.server 8000",
     "serve": "python3 -m http.server 8000",

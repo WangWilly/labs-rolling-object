@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let isPlaying = false;
     let userInteracted = false;
 
+    // Check URL parameters for audio preference from landing page
+    const urlParams = new URLSearchParams(window.location.search);
+    const audioPreference = urlParams.get('audio');
+    const audioEnabled = audioPreference === 'enabled';
+
     // Set initial volume (adjust as needed)
     audio.volume = 0.3;
 
@@ -54,6 +59,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 audioToggle.title = 'Click to Play Chanting';
             });
         }
+    }
+
+    // Auto-start audio if enabled from landing page
+    if (audioEnabled) {
+        userInteracted = true;
+        setTimeout(() => {
+            attemptAutoplay();
+        }, 2000); // Wait 2 seconds for page to load
     }
 
     // Listen for any user interaction to enable autoplay

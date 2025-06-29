@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sacred Buddha Pendant - Enter the Sacred Realm</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Landing Page Styles -->
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+    <div id="landing-container">
+        <!-- Video Background -->
+        <div class="video-container">
+            <video id="intro-video" muted autoplay playsinline preload="auto" webkit-playsinline>
+                <source src="https://github.com/WangWilly/labs-rolling-object-assets/raw/refs/heads/master/videos/Firefly%20Thai%20Temple%20Gate.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            
+            <!-- Video Overlay -->
+            <div class="video-overlay">
+                <div class="sacred-title">
+                    <h1>Sacred Buddha Pendant</h1>
+                    <p>Enter the realm of divine wisdom</p>
+                    <div class="thai-blessing">สัพเพ สัตตา สุขิตา โหนตุ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="video-loading" class="loading-indicator">
+            <div class="lotus-spinner">
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+            </div>
+            <p>Loading Sacred Experience...</p>
+        </div>
+
+        <!-- Enter Button (Hidden initially) -->
+        <div id="enter-section" class="enter-section hidden">
+            <div class="enter-content">
+                <div class="sacred-symbol">🪷</div>
+                <h2>Welcome to the Sacred Realm</h2>
+                <p>Experience the divine beauty of the Sacred Buddha Pendant</p>
+                <button id="enter-btn" class="enter-button">
+                    <span class="button-text">Enter Sacred Experience</span>
+                    <span class="button-glow"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Audio Permission Request (for mobile) -->
+        <div id="audio-permission" class="audio-permission hidden">
+            <div class="permission-content">
+                <div class="sacred-symbol">🔊</div>
+                <h3>Sacred Chanting</h3>
+                <p>Allow audio to experience the full sacred atmosphere with traditional Thai chanting</p>
+                <div class="permission-buttons">
+                    <button id="allow-audio" class="allow-btn">Allow Audio</button>
+                    <button id="continue-silent" class="silent-btn">Continue Silent</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page Script -->
+    <script src="js/landing.js"></script>
+</body>
+</html>
